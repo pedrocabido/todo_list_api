@@ -1,0 +1,44 @@
+{
+    "version": "2.0",
+    "routeKey": "PUT /actions/{id}/{date}",
+    "rawPath": "/actions/12345-12345-12345-12345/2000-01-01 00:00:00.000000",
+    "rawQueryString": "",
+    "cookies": [],
+    "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "PostmanRuntime/7.29.2",
+        "Accept": "*/*",
+        "Postman-Token": "08d18736-83bd-468d-8106-03a1baf29096",
+        "Host": "localhost:3000",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Content-Length": "106",
+        "X-Forwarded-Proto": "http",
+        "X-Forwarded-Port": "3000"
+    },
+    "requestContext": {
+        "accountId": "123456789012",
+        "apiId": "1234567890",
+        "http": {
+            "method": "PUT",
+            "path": "/actions/12345-12345-12345-12345/2000-01-01 00:00:00.000000",
+            "protocol": "HTTP/1.1",
+            "sourceIp": "127.0.0.1",
+            "userAgent": "Custom User Agent String"
+        },
+        "requestId": "04351360-2d5c-45a2-b7f5-bb4ededc27c6",
+        "routeKey": "PUT /actions/{id}/{date}",
+        "stage": "$default",
+        "time": "22/Oct/2022:19:11:42 +0000",
+        "timeEpoch": 1666465902,
+        "domainName": "localhost",
+        "domainPrefix": "localhost"
+    },
+    "body": "{\n    \"summary\": \"Mock Action Updated\",\n    \"description\": \"Mock Description Updated\",\n    \"priority\": \"Mock Priority\"\n}",
+    "pathParameters": {
+        "id": "12345-12345-12345-12345",
+        "date": "2000-01-01 00:00:00.000000"
+    },
+    "stageVariables": null,
+    "isBase64Encoded": false
+}

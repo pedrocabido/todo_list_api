@@ -1,0 +1,195 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  todo-list-api
+
+  Sample SAM Template for todo-list-api
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 30
+
+Parameters:
+  TABLE:
+    Type: String
+    Default: Actions
+  REGION:
+    Type: String
+    Default: eu-west-1
+  AWSENV:
+    Type: String
+    Default: AWS
+
+Resources: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-resources-and-properties.html
+  CreateActionsFunction:
+    Type: AWS::Serverless::Function # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
+    Properties:
+      CodeUri: src/create_action/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          TABLE: !Ref TABLE
+          REGION: !Ref REGION
+          AWSENV: !Ref AWSENV
+      Events:
+        CreateAction:
+          Type: HttpApi # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-httpapi.html
+          Properties:
+            Path: /actions
+            Method: post
+      Policies: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
+        - DynamoDBCrudPolicy: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-template-list.html#dynamo-db-crud-policy
+            TableName: !Ref ActionsTable
+
+  GetActionsFunction:
+    Type: AWS::Serverless::Function # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
+    Properties:
+      CodeUri: src/get_action/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          TABLE: !Ref TABLE
+          REGION: !Ref REGION
+          AWSENV: !Ref AWSENV
+      Events:
+        GetActions:
+          Type: HttpApi # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-httpapi.html
+          Properties:
+            Path: /actions/{id}/{date}
+            Method: get
+      Policies: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
+        - DynamoDBCrudPolicy: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-template-list.html#dynamo-db-crud-policy
+            TableName: !Ref ActionsTable
+
+  ListActionsFunction:
+    Type: AWS::Serverless::Function # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
+    Properties:
+      CodeUri: src/list_actions/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          TABLE: !Ref TABLE
+          REGION: !Ref REGION
+          AWSENV: !Ref AWSENV
+      Events:
+        ListActions:
+          Type: HttpApi # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-httpapi.html
+          Properties:
+            Path: /actions
+            Method: get
+      Policies: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
+        - DynamoDBCrudPolicy: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-template-list.html#dynamo-db-crud-policy
+            TableName: !Ref ActionsTable
+
+  DeleteActionFunction:
+    Type: AWS::Serverless::Function # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
+    Properties:
+      CodeUri: src/delete_action/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          TABLE: !Ref TABLE
+          REGION: !Ref REGION
+          AWSENV: !Ref AWSENV
+      Events:
+        ListActions:
+          Type: HttpApi # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-httpapi.html
+          Properties:
+            Path: /actions/{id}/{date}
+            Method: delete
+      Policies: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
+        - DynamoDBCrudPolicy: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-template-list.html#dynamo-db-crud-policy
+            TableName: !Ref ActionsTable
+
+  UpdateActionFunction:
+    Type: AWS::Serverless::Function # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
+    Properties:
+      CodeUri: src/update_action/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          TABLE: !Ref TABLE
+          REGION: !Ref REGION
+          AWSENV: !Ref AWSENV
+      Events:
+        ListActions:
+          Type: HttpApi # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-httpapi.html
+          Properties:
+            Path: /actions/{id}/{date}
+            Method: put
+      Policies: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
+        - DynamoDBCrudPolicy: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-template-list.html#dynamo-db-crud-policy
+            TableName: !Ref ActionsTable
+
+  ActionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        -
+          AttributeName: "id"
+          AttributeType: "S"
+        -
+          AttributeName: "created_dt"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "id"
+          KeyType: "HASH"
+        -
+          AttributeName: "created_dt"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      TableName: "Actions"
+
+Outputs:
+  ToDoListApi:
+    Description: "API Gateway endpoint URL for Prod stage for To-Do List functions"
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  CreateActionsFunction:
+    Description: "Create an Action Function ARN"
+    Value: !GetAtt CreateActionsFunction.Arn
+  CreateActionsFunctionIamRole:
+    Description: "Implicit IAM Role created for Create an Action function"
+    Value: !GetAtt CreateActionsFunctionRole.Arn
+  GetActionsFunction:
+    Description: "Get An Action Function ARN"
+    Value: !GetAtt GetActionsFunction.Arn
+  GetActionsFunctionIamRole:
+    Description: "Implicit IAM Role created for Get An Action function"
+    Value: !GetAtt GetActionsFunctionRole.Arn
+  ListActionsFunction:
+    Description: "List Actions Function ARN"
+    Value: !GetAtt ListActionsFunction.Arn
+  ListActionsFunctionIamRole:
+    Description: "Implicit IAM Role created for List Actions function"
+    Value: !GetAtt ListActionsFunctionRole.Arn
+  DeleteActionFunction:
+    Description: "Delete An Action Function ARN"
+    Value: !GetAtt DeleteActionFunction.Arn
+  DeleteActionFunctionIamRole:
+    Description: "Implicit IAM Role created for Delete An Action function"
+    Value: !GetAtt DeleteActionFunctionRole.Arn
+  UpdateActionFunction:
+    Description: "Update An Action Function ARN"
+    Value: !GetAtt UpdateActionFunction.Arn
+  UpdateActionFunctionIamRole:
+    Description: "Implicit IAM Role created for Update An Action function"
+    Value: !GetAtt UpdateActionFunctionRole.Arn

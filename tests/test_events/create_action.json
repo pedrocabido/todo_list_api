@@ -1,0 +1,41 @@
+{
+    "version": "2.0",
+    "routeKey": "POST /actions",
+    "rawPath": "/actions",
+    "rawQueryString": "",
+    "cookies": [],
+    "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "PostmanRuntime/7.29.2",
+        "Accept": "*/*",
+        "Postman-Token": "c50a7ae2-f1a4-435f-b239-bc67bfa8b84b",
+        "Host": "localhost:3000",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Content-Length": "94",
+        "X-Forwarded-Proto": "http",
+        "X-Forwarded-Port": "3000"
+    },
+    "requestContext": {
+        "accountId": "123456789012",
+        "apiId": "1234567890",
+        "http": {
+            "method": "POST",
+            "path": "/actions",
+            "protocol": "HTTP/1.1",
+            "sourceIp": "127.0.0.1",
+            "userAgent": "Custom User Agent String"
+        },
+        "requestId": "b967fe5d-ccf8-438e-a4b4-f1e37168b561",
+        "routeKey": "POST /actions",
+        "stage": "$default",
+        "time": "16/Oct/2022:08:34:25 +0000",
+        "timeEpoch": 1665909265,
+        "domainName": "localhost",
+        "domainPrefix": "localhost"
+    },
+    "body": "{\n    \"summary\": \"Mock Action\",\n    \"description\": \"Mock Description\",\n    \"priority\": \"Mock Priority\"\n}",
+    "pathParameters": {},
+    "stageVariables": null,
+    "isBase64Encoded": false
+}

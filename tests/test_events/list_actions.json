@@ -1,0 +1,39 @@
+{
+    "version": "2.0",
+    "routeKey": "GET /actions",
+    "rawPath": "/actions",
+    "rawQueryString": "",
+    "cookies": [],
+    "headers": {
+        "User-Agent": "PostmanRuntime/7.29.2",
+        "Accept": "*/*",
+        "Postman-Token": "137847d3-072e-4db3-82e1-15968637a091",
+        "Host": "localhost:3000",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "X-Forwarded-Proto": "http",
+        "X-Forwarded-Port": "3000"
+    },
+    "requestContext": {
+        "accountId": "123456789012",
+        "apiId": "1234567890",
+        "http": {
+            "method": "GET",
+            "path": "/actions",
+            "protocol": "HTTP/1.1",
+            "sourceIp": "127.0.0.1",
+            "userAgent": "Custom User Agent String"
+        },
+        "requestId": "0756405d-d0c9-438f-a98f-4834379d4670",
+        "routeKey": "GET /actions",
+        "stage": "$default",
+        "time": "22/Oct/2022:18:50:55 +0000",
+        "timeEpoch": 1666464655,
+        "domainName": "localhost",
+        "domainPrefix": "localhost"
+    },
+    "body": "",
+    "pathParameters": {},
+    "stageVariables": null,
+    "isBase64Encoded": false
+}
