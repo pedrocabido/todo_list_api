@@ -155,3 +155,27 @@ Run the unit tests:
 ```bash
 python3 -m unittest discover tests/unit/ -bv
 ```
+
+Validate the SAM template:
+
+```bash
+sam validate
+```
+
+Build the SAM stack:
+
+```bash
+sam build
+```
+
+Deploy the SAM stack:
+
+```bash
+sam deploy --guided
+```
+
+Delete the SAM stack:
+
+```bash
+sam delete --stack-name todo-list-api
+```

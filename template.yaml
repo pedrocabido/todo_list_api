@@ -9,15 +9,26 @@ Description: >
 Globals:
   Function:
     Timeout: 30
+    Runtime: python3.9
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        TABLE: !Ref Table
+        REGION: !Ref Region
+        AWSENV: !Ref AWSenv
 
 Parameters:
   TABLE:
+  Table:
     Type: String
     Default: Actions
   REGION:
+  Region:
     Type: String
     Default: eu-west-1
   AWSENV:
+  AWSenv:
     Type: String
     Default: AWS
 
@@ -27,20 +38,13 @@ Resources: # https://docs.aws.amazon.com/serverless-application-model/latest/dev
     Properties:
       CodeUri: src/create_action/
       Handler: app.lambda_handler
-      Runtime: python3.9
-      Architectures:
-        - x86_64
-      Environment:
-        Variables:
-          TABLE: !Ref TABLE
-          REGION: !Ref REGION
-          AWSENV: !Ref AWSENV
       Events:
         CreateAction:
           Type: HttpApi # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-httpapi.html
           Properties:
             Path: /actions
             Method: post
+            ApiId: !Ref HttpApi
       Policies: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
         - DynamoDBCrudPolicy: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-template-list.html#dynamo-db-crud-policy
             TableName: !Ref ActionsTable
@@ -50,20 +54,13 @@ Resources: # https://docs.aws.amazon.com/serverless-application-model/latest/dev
     Properties:
       CodeUri: src/get_action/
       Handler: app.lambda_handler
-      Runtime: python3.9
-      Architectures:
-        - x86_64
-      Environment:
-        Variables:
-          TABLE: !Ref TABLE
-          REGION: !Ref REGION
-          AWSENV: !Ref AWSENV
       Events:
         GetActions:
           Type: HttpApi # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-httpapi.html
           Properties:
             Path: /actions/{id}/{date}
             Method: get
+            ApiId: !Ref HttpApi
       Policies: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
         - DynamoDBCrudPolicy: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-template-list.html#dynamo-db-crud-policy
             TableName: !Ref ActionsTable
@@ -73,20 +70,13 @@ Resources: # https://docs.aws.amazon.com/serverless-application-model/latest/dev
     Properties:
       CodeUri: src/list_actions/
       Handler: app.lambda_handler
-      Runtime: python3.9
-      Architectures:
-        - x86_64
-      Environment:
-        Variables:
-          TABLE: !Ref TABLE
-          REGION: !Ref REGION
-          AWSENV: !Ref AWSENV
       Events:
         ListActions:
           Type: HttpApi # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-httpapi.html
           Properties:
             Path: /actions
             Method: get
+            ApiId: !Ref HttpApi
       Policies: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
         - DynamoDBCrudPolicy: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-template-list.html#dynamo-db-crud-policy
             TableName: !Ref ActionsTable
@@ -96,20 +86,13 @@ Resources: # https://docs.aws.amazon.com/serverless-application-model/latest/dev
     Properties:
       CodeUri: src/delete_action/
       Handler: app.lambda_handler
-      Runtime: python3.9
-      Architectures:
-        - x86_64
-      Environment:
-        Variables:
-          TABLE: !Ref TABLE
-          REGION: !Ref REGION
-          AWSENV: !Ref AWSENV
       Events:
         ListActions:
           Type: HttpApi # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-httpapi.html
           Properties:
             Path: /actions/{id}/{date}
             Method: delete
+            ApiId: !Ref HttpApi
       Policies: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
         - DynamoDBCrudPolicy: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-template-list.html#dynamo-db-crud-policy
             TableName: !Ref ActionsTable
@@ -119,20 +102,13 @@ Resources: # https://docs.aws.amazon.com/serverless-application-model/latest/dev
     Properties:
       CodeUri: src/update_action/
       Handler: app.lambda_handler
-      Runtime: python3.9
-      Architectures:
-        - x86_64
-      Environment:
-        Variables:
-          TABLE: !Ref TABLE
-          REGION: !Ref REGION
-          AWSENV: !Ref AWSENV
       Events:
         ListActions:
           Type: HttpApi # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-httpapi.html
           Properties:
             Path: /actions/{id}/{date}
             Method: put
+            ApiId: !Ref HttpApi
       Policies: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
         - DynamoDBCrudPolicy: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-template-list.html#dynamo-db-crud-policy
             TableName: !Ref ActionsTable
@@ -159,10 +135,21 @@ Resources: # https://docs.aws.amazon.com/serverless-application-model/latest/dev
         WriteCapacityUnits: 1
       TableName: "Actions"
 
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins:
+          - "*"
+        AllowHeaders:
+          - "*"
+        AllowMethods:
+          - "*"
+
 Outputs:
   ToDoListApi:
     Description: "API Gateway endpoint URL for Prod stage for To-Do List functions"
-    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+    Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/actions"
   CreateActionsFunction:
     Description: "Create an Action Function ARN"
     Value: !GetAtt CreateActionsFunction.Arn

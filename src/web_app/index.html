@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test App</title>
+</head>
+<body>
+    <button onclick="listFunction()">List Actions</button><br><br>
+    <form onsubmit="getFunction()">
+        <input type="text" id="getAction" name="getAction" size="50" placeholder="ea9091aa-764b-4faa-bbe0-dd1d705c8d27">
+        <input type="submit" value="Get Action">
+    </form><br>
+    <form onsubmit="addFunction()">
+        <input type="text" id="addActionName" name="addActionName" size="50" placeholder="Action Name">
+        <input type="text" id="addActionDesc" name="addActionDesc" size="50" placeholder="Action Description">
+        <input type="text" id="addActionPri" name="addActionPri" size="50" placeholder="Low/Medium/High">
+        <input type="submit" value="Add Action">
+    </form><br>
+    <form onsubmit="deleteFunction()">
+        <input type="text" id="deleteActionId" name="deleteActionId" size="50" placeholder="ea9091aa-764b-4faa-bbe0-dd1d705c8d27">
+        <input type="text" id="deleteActionDate" name="deleteActionDate" size="50" placeholder="YYYY-MM-DD hh:mm:ss.xxxxxx">
+        <input type="submit" value="Delete Action">
+    </form><br>
+    <button onclick="reset()">Reset</button>
+
+    <p id="demo"></p>
+
+    <script>
+        function listFunction() {
+            const requestOptions = {
+                method: 'GET',
+                redirect: 'follow'
+            }
+            
+            fetchApi("https://a4smq5icbh.execute-api.eu-west-1.amazonaws.com/actions", requestOptions)
+        }
+
+        function addFunction() {
+            event.preventDefault()
+            const actionBody = JSON.stringify({
+                "summary": document.getElementById("addActionName").value,
+                "description": document.getElementById("addActionDesc").value,
+                "priority": document.getElementById("addActionPri").value
+            })
+
+            const requestOptions = {
+                method: 'POST',
+                redirect: 'follow',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: actionBody
+            }
+
+            fetchApi("https://a4smq5icbh.execute-api.eu-west-1.amazonaws.com/actions", requestOptions)
+        }
+
+        function deleteFunction() {
+            event.preventDefault()
+            const actionId = document.getElementById("deleteActionId").value
+            const actionDate = document.getElementById("deleteActionDate").value
+            const requestOptions = {
+                method: 'DELETE',
+                redirect: 'follow'
+            }
+
+            fetchApi(`https://a4smq5icbh.execute-api.eu-west-1.amazonaws.com/actions/${actionId}/${actionDate}`, requestOptions)
+        }
+
+        function getFunction() {
+            event.preventDefault()
+            const action = document.getElementById("getAction").value
+            const requestOptions = {
+                method: 'GET',
+                redirect: 'follow'
+            }
+            
+            fetchApi(`https://a4smq5icbh.execute-api.eu-west-1.amazonaws.com/actions/${action}`, requestOptions)
+        }
+        
+        function fetchApi(url, requestOptions) {
+            fetch(url, requestOptions)
+                .then(response => response.text())
+                .then(result => {
+                    console.log(result)
+                    addElem(result)
+                })
+                .catch(error => console.log('error', error))
+        }
+
+        function addElem(result) {
+            const newP = document.createElement("p")
+            const result_elem = document.createTextNode(result)
+            newP.appendChild(result_elem)
+            document.getElementById("demo").appendChild(newP)
+        }
+
+        function reset() {
+            document.getElementById("demo").innerHTML = ""
+        }
+    </script>
+    
+</body>
+</html>
