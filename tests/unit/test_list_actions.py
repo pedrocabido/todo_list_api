@@ -1,4 +1,5 @@
 import json
+import sys
 from unittest import main, TestCase, mock
 import os
 
@@ -14,6 +15,7 @@ last_key_body = '{\n    "lastKey": {\n        "date": "2000-01-01 00:00:00.00000
 @mock_dynamodb
 class TestListActions(TestCase):
     def setUp(self):
+        sys.path.append(os.getcwd() + '/layers/python')
         self.dynamodb = boto3.client("dynamodb", region_name="eu-west-1")
         self.dynamodb.create_table(
             TableName="Mock_Actions",
@@ -34,6 +36,7 @@ class TestListActions(TestCase):
 
     def tearDown(self) -> None:
         self.dynamodb.delete_table(TableName="Mock_Actions")
+        sys.path.remove(os.getcwd() + '/layers/python')
 
     def test_list_action_200_without_pagination(self):
         number_of_items = 3

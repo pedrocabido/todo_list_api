@@ -1,6 +1,7 @@
 import json
 from unittest import main, TestCase, mock
 import os
+import sys
 
 import boto3
 from moto import mock_dynamodb
@@ -12,6 +13,7 @@ from moto import mock_dynamodb
 @mock_dynamodb
 class TestDeleteAction(TestCase):
     def setUp(self):
+        sys.path.append(os.getcwd() + '/layers/python')
         self.dynamodb = boto3.client("dynamodb", region_name="eu-west-1")
         self.dynamodb.create_table(
             TableName="Mock_Actions",
@@ -28,6 +30,7 @@ class TestDeleteAction(TestCase):
 
     def tearDown(self) -> None:
         self.dynamodb.delete_table(TableName="Mock_Actions")
+        sys.path.remove(os.getcwd() + '/layers/python')
 
     def test_delete_action_200(self):
         mock_item = {

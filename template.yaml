@@ -19,18 +19,21 @@ Globals:
         AWSENV: !Ref AWSenv
 
 Parameters:
-  TABLE:
   Table:
     Type: String
     Default: Actions
-  REGION:
   Region:
     Type: String
     Default: eu-west-1
-  AWSENV:
   AWSenv:
     Type: String
     Default: AWS
+  UserPoolId:
+    Type: String
+    Description: User poolID for Cognito provider
+  AppClientId:
+    Type: String
+    Description: Client id for user pool
 
 Resources: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-resources-and-properties.html
   CreateActionsFunction:
@@ -38,6 +41,8 @@ Resources: # https://docs.aws.amazon.com/serverless-application-model/latest/dev
     Properties:
       CodeUri: src/create_action/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref MyLayers
       Events:
         CreateAction:
           Type: HttpApi # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-httpapi.html
@@ -54,6 +59,8 @@ Resources: # https://docs.aws.amazon.com/serverless-application-model/latest/dev
     Properties:
       CodeUri: src/get_action/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref MyLayers
       Events:
         GetActions:
           Type: HttpApi # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-httpapi.html
@@ -70,6 +77,8 @@ Resources: # https://docs.aws.amazon.com/serverless-application-model/latest/dev
     Properties:
       CodeUri: src/list_actions/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref MyLayers
       Events:
         ListActions:
           Type: HttpApi # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-httpapi.html
@@ -86,6 +95,8 @@ Resources: # https://docs.aws.amazon.com/serverless-application-model/latest/dev
     Properties:
       CodeUri: src/delete_action/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref MyLayers
       Events:
         ListActions:
           Type: HttpApi # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-httpapi.html
@@ -102,6 +113,8 @@ Resources: # https://docs.aws.amazon.com/serverless-application-model/latest/dev
     Properties:
       CodeUri: src/update_action/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref MyLayers
       Events:
         ListActions:
           Type: HttpApi # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-httpapi.html
@@ -112,6 +125,13 @@ Resources: # https://docs.aws.amazon.com/serverless-application-model/latest/dev
       Policies: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
         - DynamoDBCrudPolicy: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-template-list.html#dynamo-db-crud-policy
             TableName: !Ref ActionsTable
+  
+  MyLayers:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: layers/
+      CompatibleRuntimes:
+        - python3.9
 
   ActionsTable:
     Type: AWS::DynamoDB::Table
@@ -143,8 +163,14 @@ Resources: # https://docs.aws.amazon.com/serverless-application-model/latest/dev
           - "*"
         AllowHeaders:
           - "*"
+          - http://localhost:5500
+          - http://127.0.0.1:5500
         AllowMethods:
           - "*"
+          - GET
+          - POST
+          - PUT
+          - DELETE
 
 Outputs:
   ToDoListApi:

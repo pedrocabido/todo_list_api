@@ -1,10 +1,10 @@
 import json
 from unittest import main, TestCase, mock
 import os
+import sys
 
 import boto3
 from moto import mock_dynamodb
-
 
 @mock.patch.dict(
     os.environ, {"TABLE": "Mock_Actions", "REGION": "eu-west-1", "AWSENV": "MOCK"}
@@ -12,6 +12,7 @@ from moto import mock_dynamodb
 @mock_dynamodb
 class TestCreateAction(TestCase):
     def setUp(self):
+        sys.path.append(os.getcwd() + '/layers/python')
         self.dynamodb = boto3.client("dynamodb", region_name="eu-west-1")
         self.dynamodb.create_table(
             TableName="Mock_Actions",
@@ -28,6 +29,7 @@ class TestCreateAction(TestCase):
 
     def tearDown(self) -> None:
         self.dynamodb.delete_table(TableName="Mock_Actions")
+        sys.path.remove(os.getcwd() + '/layers/python')
 
     def test_create_action_201(self):
         from src.create_action import app

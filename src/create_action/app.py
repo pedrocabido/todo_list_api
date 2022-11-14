@@ -1,9 +1,8 @@
 import datetime
 import json
-import os
 import uuid
 
-import boto3
+from dynamo import dynamo_table
 
 
 def lambda_handler(event, context):
@@ -37,16 +36,3 @@ def lambda_handler(event, context):
     except Exception as e:
         print(e)
         return {"statusCode": 500, "headers": {}, "body": "Internal Server Error"}
-
-
-def dynamo_table():
-    table_name = os.environ.get("TABLE", "Actions")
-    region = os.environ.get("REGION", "eu-west-1")
-    aws_environment = os.environ.get("AWSENV", "AWS")
-
-    if aws_environment == "AWS_SAM_LOCAL":
-        actions_table = boto3.resource("dynamodb", endpoint_url="http://dynamodb:8000")
-    else:
-        actions_table = boto3.resource("dynamodb", region_name=region)
-
-    return actions_table.Table(table_name)
